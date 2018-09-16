@@ -2,7 +2,7 @@ apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.platform.jvm'
 
 dependencies {
-    expectedBy project(':greeting:common')
+    expectedBy project(':greeting')
 
     // Specify Kotlin/JVM stdlib dependency.
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

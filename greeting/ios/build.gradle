@@ -37,5 +37,5 @@ afterEvaluate { project ->
 
 dependencies {
     // Specify dependency on a common project for Kotlin multiplatform build
-    expectedBy project(':greeting:common')
+    expectedBy project(':greeting')
 }

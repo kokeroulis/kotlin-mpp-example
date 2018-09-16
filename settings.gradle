@@ -1,5 +1,5 @@
 include ':greeting'
-include ':greeting:common'
+include ':greeting'
 include ':greeting:android'
 include ':greeting:ios'
 include ':androidApp'
