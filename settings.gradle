@@ -2,3 +2,5 @@ include ':greeting'
 include ':greeting:common'
 include ':greeting:android'
 include ':greeting:ios'
+include ':androidApp:app'
+
