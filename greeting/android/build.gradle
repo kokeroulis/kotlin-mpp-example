@@ -3,9 +3,10 @@ apply plugin: 'org.jetbrains.kotlin.platform.jvm'
 
 dependencies {
     expectedBy project(':greeting')
-
     // Specify Kotlin/JVM stdlib dependency.
+    implementation deps.kotlin.coroutines.android
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     testImplementation 'junit:junit:4.12'
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }

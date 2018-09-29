@@ -7,10 +7,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.Main
-import kotlinx.coroutines.channels.consumeEach
 import org.greeting.Factory
 import org.greeting.cooo.DummyNetworkService
 import org.greeting.cooo.HeavyNetworkOperation
+import org.greeting.cooo.ViewModelStore
+import org.greeting.cooo.start
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.Main + binderJob)
 
     private lateinit var store: Store
+    private lateinit var viewModelStore: ViewModelStore<MainViewModelRedux>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,27 +38,23 @@ class MainActivity : AppCompatActivity() {
         val tv = TextView(this)
         tv.text = product.toString()
         rootLayout.addView(tv)
-        store = lastCustomNonConfigurationInstance as? Store ?: Presenter(dummyNetworkService).startStore(Dispatchers.Main)
+
+        viewModelStore = lastCustomNonConfigurationInstance as? ViewModelStore<MainViewModelRedux> ?: MainViewModelRedux(Dispatchers.IO, dummyNetworkService).start(Dispatchers.Main)
 
         test()
+
+        viewModelStore.viewModelRedux.offerAction(MainAction.LoadMainContent)
     }
 
     private fun test() {
-        scope.launch(Dispatchers.Main) {
-            Log.e("2222", Thread.currentThread().name)
-            Log.e("44444", Thread.currentThread().name)
 
-            val models = store.presenter.models
-            models.consumeEach {
-                Log.e("RESSS", it)
-                Log.e("test1", Thread.currentThread().name)
-
-            }
+        viewModelStore.viewModelRedux.bindTo(scope) { newSTATE ->
+            Log.e("test", "New STATEEEEE $newSTATE")
         }
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any {
-        return store
+        return viewModelStore
     }
 
     class Store(
@@ -76,7 +74,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         binderJob.cancel()
         if (!isChangingConfigurations) {
-            store.stop()
+            //store.stop()
+            viewModelStore.stop()
         }
         super.onDestroy()
     }
