@@ -26,7 +26,7 @@ abstract class ViewModelRedux<STATE, ACTION> {
             withContext(dispatcher) {
                 // dispatch the initial state
                 stateChannel.offer(state)
-                
+
                 actions.consumeEach {
                     val sideEffect = sideEffects(currentAction = it, currentState = state)
                     val newState = reduce(currentAction = sideEffect, currentState = state)
@@ -49,16 +49,16 @@ abstract class ViewModelRedux<STATE, ACTION> {
 }
 
 class ViewModelStore<viewModel: ViewModelRedux<*, *>>(
-    val job: Job?,
+    val job: Job,
     val viewModelRedux: viewModel
 ) {
 
     fun stop() {
-        job?.cancel()
+        job.cancel()
     }
 }
 
 fun <ViewModel : ViewModelRedux<*, *>> ViewModel.start(dispatcher: CoroutineDispatcher) : ViewModelStore<ViewModel> {
     val job = GlobalScope.launch(dispatcher) { initialize() }
-    return ViewModelStore(null, this)
+    return ViewModelStore(job, this)
 }
