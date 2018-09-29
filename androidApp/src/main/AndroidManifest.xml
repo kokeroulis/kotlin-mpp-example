@@ -1,7 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="org.konan.multiplatform">
     <application
-                 android:name=".MyApplication"
                  android:allowBackup="true"
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme">
