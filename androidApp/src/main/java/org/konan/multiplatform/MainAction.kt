@@ -5,4 +5,6 @@ sealed class MainAction {
     object LoadMainContent : MainAction()
 
     data class MainContentLoaded(val content: String) : MainAction()
+
+    object AnotherAction : MainAction()
 }

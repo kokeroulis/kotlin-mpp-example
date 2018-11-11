@@ -11,6 +11,7 @@ abstract class ViewModelRedux<STATE, ACTION> {
     private val stateChannel = ConflatedBroadcastChannel<STATE>()
 
     private var state: STATE = initialState()
+    private var latestReducedAction: ACTION? = null
 
     abstract fun initialState(): STATE
 
@@ -20,22 +21,31 @@ abstract class ViewModelRedux<STATE, ACTION> {
 
     protected abstract fun reduce(currentAction: ACTION, currentState: STATE): STATE
 
-    protected abstract suspend fun sideEffects(currentAction: ACTION, currentState: STATE): ACTION
+    protected abstract suspend fun sideEffects(currentAction: ACTION, currentState: STATE): ACTION?
 
     suspend fun initialize() = coroutineScope<Unit> {
-            withContext(dispatcher) {
-                // dispatch the initial state
-                stateChannel.offer(state)
+        withContext(dispatcher) {
+            // dispatch the initial state
+            stateChannel.offer(state)
 
-                actions.consumeEach {
-                    val sideEffect = sideEffects(currentAction = it, currentState = state)
-                    val newState = reduce(currentAction = sideEffect, currentState = state)
-                    if (newState != state) {
-                        state = newState
-                        stateChannel.offer(newState)
-                    }
+            actions.consumeEach {
+                if (latestReducedAction != it) {
+                    handleAction(it)
                 }
             }
+        }
+    }
+
+    private suspend fun handleAction(action: ACTION) {
+        val sideEffect = sideEffects(currentAction = action, currentState = state)
+        val newState = reduce(currentAction = sideEffect ?: action, currentState = state)
+
+        if (newState != state) {
+            state = newState
+            stateChannel.offer(newState)
+
+            latestReducedAction = action
+        }
     }
 
     fun bindTo(scope: CoroutineScope, coroutineDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
@@ -48,7 +58,7 @@ abstract class ViewModelRedux<STATE, ACTION> {
     }
 }
 
-class ViewModelStore<viewModel: ViewModelRedux<*, *>>(
+class ViewModelStore<viewModel : ViewModelRedux<*, *>>(
     val job: Job,
     val viewModelRedux: viewModel
 ) {
@@ -58,7 +68,7 @@ class ViewModelStore<viewModel: ViewModelRedux<*, *>>(
     }
 }
 
-fun <ViewModel : ViewModelRedux<*, *>> ViewModel.start(dispatcher: CoroutineDispatcher) : ViewModelStore<ViewModel> {
+fun <ViewModel : ViewModelRedux<*, *>> ViewModel.start(dispatcher: CoroutineDispatcher): ViewModelStore<ViewModel> {
     val job = GlobalScope.launch(dispatcher) { initialize() }
     return ViewModelStore(job, this)
 }
