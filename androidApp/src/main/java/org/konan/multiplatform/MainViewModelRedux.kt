@@ -2,12 +2,12 @@ package org.konan.multiplatform
 
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
-import org.greeting.cooo.DummyNetworkService
 import org.greeting.cooo.ViewModelRedux
+import org.greeting.domain.users.UserRepository
 
 class MainViewModelRedux(
     override val dispatcher: CoroutineDispatcher,
-    private val dummyNetworkService: DummyNetworkService
+    private val usersRepository: UserRepository
 ) : ViewModelRedux<MainState, MainAction>() {
     override fun initialState(): MainState {
         return MainState()
@@ -27,7 +27,7 @@ class MainViewModelRedux(
     override suspend fun sideEffects(currentAction: MainAction, currentState: MainState): MainAction? {
         return when (currentAction) {
             is MainAction.LoadMainContent -> {
-                val result = dummyNetworkService.doSomeOperation()
+                val result = usersRepository.getUsers()
                 MainAction.MainContentLoaded(result)
             }
             else -> null

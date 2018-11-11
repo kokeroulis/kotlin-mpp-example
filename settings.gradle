@@ -1,5 +1,8 @@
 include ':greeting'
 include ':greeting:android'
 include ':greeting:ios'
+
+include ':data'
+include ':domain'
 include ':androidApp'
 

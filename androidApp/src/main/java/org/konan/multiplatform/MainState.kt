@@ -1,3 +1,5 @@
 package org.konan.multiplatform
 
-data class MainState(val isLoading: Boolean = true, val content: String? = null)
+import org.greeting.domain.users.User
+
+data class MainState(val isLoading: Boolean = true, val userList: List<User>? = null)

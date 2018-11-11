@@ -8,9 +8,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.greeting.Factory
 import org.greeting.cooo.DummyNetworkService
+
 import org.greeting.cooo.HeavyNetworkOperation
 import org.greeting.cooo.ViewModelStore
 import org.konan.multiplatform.base.BaseViewModelReduxActivity
+import org.konan.multiplatform.di.Injector
 import kotlin.properties.Delegates
 
 class MainActivity : BaseViewModelReduxActivity<MainViewModelRedux>() {
@@ -47,13 +49,13 @@ class MainActivity : BaseViewModelReduxActivity<MainViewModelRedux>() {
         viewModelRedux.bindTo(scope) { newSTATE ->
             Log.e("test", "New STATEEEEE $newSTATE")
 
-            newSTATE.content?.let {
+            newSTATE.userList?.let {
                 viewModelRedux.offerAction(MainAction.AnotherAction)
             }
         }
     }
 
     override fun createViewModel(): MainViewModelRedux {
-        return MainViewModelRedux(Dispatchers.IO, dummyNetworkService)
+        return MainViewModelRedux(Dispatchers.IO, Injector.injectUserRepository())
     }
 }

@@ -1,0 +1,21 @@
+apply plugin: 'kotlin-platform-common'
+apply plugin: 'kotlinx-serialization'
+
+dependencies {
+    // Set up compilation dependency on common Kotlin stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
+    implementation deps.kotlin.coroutines.common
+    implementation deps.kotlin.ktor.common
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.0"
+
+    implementation project(':domain')
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlin_version"
+}
+
+
+//repositories {
+//    maven("https://dl.bintray.com/kotlin/ktor/")
+//    maven("https://dl.bintray.com/kotlin/kotlinx/")
+//}

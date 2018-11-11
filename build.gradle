@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.0-rc-57'
+    ext.kotlin_version = '1.3.0'
     ext.konan_version = '0.9'
 
     repositories {
@@ -9,11 +9,14 @@ buildscript {
         google()
         jcenter()
         maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://dl.bintray.com/kotlin/ktor/" }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$konan_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,6 +25,7 @@ buildscript {
     ext.versions = [
             //'kotlin': '1.3.0-rc-57',
             'kotlinCoroutines': '0.26.1-eap13',
+            'ktor': '0.9.4'
     ]
 
     ext.deps = [
@@ -36,6 +40,11 @@ buildscript {
                             'jdk'    : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}",
                             'native' : "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${versions.kotlinCoroutines}",
                             'android': "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}",
+                    ],
+                    'ktor': [
+                            'common'  : "io.ktor:ktor-client:${versions.ktor}",
+                            'android' : "io.ktor:ktor-client-android:${versions.ktor}",
+                            'native' : "io.ktor:ktor-client-ios:${versions.ktor}",
                     ]
             ]]
 }
@@ -46,6 +55,7 @@ allprojects {
         jcenter()
         google()
         maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://dl.bintray.com/kotlin/ktor/" }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 }
